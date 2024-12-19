@@ -78,8 +78,9 @@ void oai_init_audio_capture() {
   }
 }
 
-opus_int16 *output_buffer = NULL;
-OpusDecoder *opus_decoder = NULL;
+static opus_int16 *output_buffer = NULL;
+static size_t output_buffer_size = BUFFER_SAMPLES * sizeof(opus_int16);
+static OpusDecoder *opus_decoder = NULL;
 
 void oai_init_audio_decoder() {
   int decoder_error = 0;
@@ -89,7 +90,7 @@ void oai_init_audio_decoder() {
     return;
   }
 
-  output_buffer = (opus_int16 *)malloc(BUFFER_SAMPLES * sizeof(opus_int16));
+  output_buffer = (opus_int16 *)malloc(output_buffer_size);
 }
 
 void oai_audio_decode(uint8_t *data, size_t size) {
@@ -98,14 +99,14 @@ void oai_audio_decode(uint8_t *data, size_t size) {
 
   if (decoded_size > 0) {
     size_t bytes_written = 0;
-    i2s_write(I2S_NUM_0, output_buffer, BUFFER_SAMPLES * sizeof(opus_int16),
+    i2s_write(I2S_NUM_0, output_buffer, output_buffer_size,
               &bytes_written, portMAX_DELAY);
   }
 }
 
-OpusEncoder *opus_encoder = NULL;
-opus_int16 *encoder_input_buffer = NULL;
-uint8_t *encoder_output_buffer = NULL;
+static OpusEncoder *opus_encoder = NULL;
+static opus_int16 *encoder_input_buffer = NULL;
+static uint8_t *encoder_output_buffer = NULL;
 
 void oai_init_audio_encoder() {
   int encoder_error;

@@ -11,10 +11,10 @@
 
 #define TICK_INTERVAL 15
 
-PeerConnection *peer_connection = NULL;
+static PeerConnection *peer_connection = NULL;
 
 #ifndef LINUX_BUILD
-StaticTask_t task_buffer;
+static StaticTask_t task_buffer;
 void oai_send_audio_task(void *user_data) {
   oai_init_audio_encoder();
 
