@@ -3,6 +3,7 @@
 #include <string.h>
 
 #include "main.h"
+#include "platform.h"
 
 #ifndef MIN
 #define MIN(a, b) (((a) < (b)) ? (a) : (b))
@@ -34,9 +35,7 @@ esp_err_t oai_http_event_handler(esp_http_client_event_t *evt) {
       ESP_LOGD(LOG_TAG, "HTTP_EVENT_ON_DATA, len=%d", evt->data_len);
       if (esp_http_client_is_chunked_response(evt->client)) {
         ESP_LOGE(LOG_TAG, "Chunked HTTP response not supported");
-#ifndef LINUX_BUILD
-        esp_restart();
-#endif
+        oai_platform_restart();
       }
 
       if (output_len == 0 && evt->user_data) {
@@ -88,9 +87,7 @@ void oai_http_request(char *offer, char *answer) {
   esp_err_t err = esp_http_client_perform(client);
   if (err != ESP_OK || esp_http_client_get_status_code(client) != 201) {
     ESP_LOGE(LOG_TAG, "Error perform http request %s", esp_err_to_name(err));
-#ifndef LINUX_BUILD
-    esp_restart();
-#endif
+    oai_platform_restart();
   }
 
   esp_http_client_cleanup(client);
