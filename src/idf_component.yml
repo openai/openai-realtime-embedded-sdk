@@ -1,3 +1,4 @@
 dependencies:
+  espressif/es8311: "^1.0.0~1"
   idf:
     version: ">=4.1.0"
