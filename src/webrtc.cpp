@@ -37,10 +37,19 @@ static void oai_onconnectionstatechange_task(PeerConnectionState state,
 #endif
   } else if (state == PEER_CONNECTION_CONNECTED) {
 #ifndef LINUX_BUILD
+#if CONFIG_OPENAI_BOARD_ESP32_S3
     StackType_t *stack_memory = (StackType_t *)heap_caps_malloc(
         20000 * sizeof(StackType_t), MALLOC_CAP_SPIRAM);
     xTaskCreateStaticPinnedToCore(oai_send_audio_task, "audio_publisher", 20000,
                                   NULL, 7, stack_memory, &task_buffer, 0);
+#elif CONFIG_OPENAI_BOARD_M5_ATOMS3R
+    // Because we change the sampling rate to 16K, so we need increased the 
+    // memory size, if not will overflow :)
+    StackType_t *stack_memory = (StackType_t *)heap_caps_malloc(
+        40000 * sizeof(StackType_t), MALLOC_CAP_SPIRAM);
+    xTaskCreateStaticPinnedToCore(oai_send_audio_task, "audio_publisher", 40000,
+                                  NULL, 7, stack_memory, &task_buffer, 0);
+#endif
 #endif
   }
 }
