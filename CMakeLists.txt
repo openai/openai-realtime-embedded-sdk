@@ -13,6 +13,10 @@ if(NOT DEFINED ENV{OPENAI_API_KEY})
   message(FATAL_ERROR "Env variable OPENAI_API_KEY must be set")
 endif()
 
+if(DEFINED ENV{LOG_DATACHANNEL_MESSAGES})
+  add_compile_definitions(LOG_DATACHANNEL_MESSAGES="1")
+endif()
+
 add_compile_definitions(OPENAI_API_KEY="$ENV{OPENAI_API_KEY}")
 add_compile_definitions(OPENAI_REALTIMEAPI="https://api.openai.com/v1/realtime?model=gpt-4o-mini-realtime-preview-2024-12-17")
 
