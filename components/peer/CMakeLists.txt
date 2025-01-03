@@ -7,18 +7,13 @@ idf_component_register(
   REQUIRES mbedtls srtp json esp_netif
 )
 
-# Disable building of usrsctp
-file(READ ${CMAKE_CURRENT_SOURCE_DIR}/../../deps/libpeer/src/config.h INPUT_CONTENT)
-string(REPLACE "#define HAVE_USRSCTP" "" MODIFIED_CONTENT ${INPUT_CONTENT})
-file(WRITE ${CMAKE_CURRENT_SOURCE_DIR}/../../deps/libpeer/src/config.h ${MODIFIED_CONTENT})
-
 # Disable KeepAlives
 file(READ ${CMAKE_CURRENT_SOURCE_DIR}/../../deps/libpeer/src/config.h INPUT_CONTENT)
 string(REPLACE "#define KEEPALIVE_CONNCHECK 10000" "#define KEEPALIVE_CONNCHECK 0" MODIFIED_CONTENT ${INPUT_CONTENT})
 file(WRITE ${CMAKE_CURRENT_SOURCE_DIR}/../../deps/libpeer/src/config.h ${MODIFIED_CONTENT})
 
-
 if(NOT IDF_TARGET STREQUAL linux)
-  add_definitions("-DESP32")
+  add_definitions("-DESP32 -DCONFIG_USE_LWIP=1 -DCONFIG_AUDIO_BUFFER_SIZE=8096 -DCONFIG_DATA_BUFFER_SIZE=102400 -D__BYTE_ORDER=__LITTLE_ENDIAN")
 endif()
-add_definitions("-DHTTP_DO_NOT_USE_CUSTOM_CONFIG -DMQTT_DO_NOT_USE_CUSTOM_CONFIG -DDISABLE_PEER_SIGNALING=true")
+
+add_definitions("-DHTTP_DO_NOT_USE_CUSTOM_CONFIG -DMQTT_DO_NOT_USE_CUSTOM_CONFIG -DCONFIG_USE_USRSCTP=0 -DDISABLE_PEER_SIGNALING=0")

@@ -21,8 +21,6 @@ You can get a ESP32S3 for much less money on eBay/AliExpress.
 
 ## Installation
 
-`protoc` must be in your path with `protobufc` installed.
-
 Call `set-target` with the platform you are targetting. Today only `linux` and `esp32s3` are supported.
 * `idf.py set-target esp32s3`
 
