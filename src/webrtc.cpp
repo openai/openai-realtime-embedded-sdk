@@ -25,6 +25,23 @@ void oai_send_audio_task(void *user_data) {
 }
 #endif
 
+static void oai_ondatachannel_onmessage_task(char *msg, size_t len,
+                                             void *userdata, uint16_t sid) {
+#ifdef LOG_DATACHANNEL_MESSAGES
+  ESP_LOGI(LOG_TAG, "DataChannel Message: %s", msg);
+#endif
+}
+
+static void oai_ondatachannel_onopen_task(void *userdata) {
+  if (peer_connection_create_datachannel(peer_connection, DATA_CHANNEL_RELIABLE,
+                                         0, 0, (char *)"oai-events",
+                                         (char *)"") != -1) {
+    ESP_LOGI(LOG_TAG, "DataChannel created");
+  } else {
+    ESP_LOGE(LOG_TAG, "Failed to create DataChannel");
+  }
+}
+
 static void oai_onconnectionstatechange_task(PeerConnectionState state,
                                              void *user_data) {
   ESP_LOGI(LOG_TAG, "PeerConnectionState: %s",
@@ -56,7 +73,7 @@ void oai_webrtc() {
       .ice_servers = {},
       .audio_codec = CODEC_OPUS,
       .video_codec = CODEC_NONE,
-      .datachannel = DATA_CHANNEL_NONE,
+      .datachannel = DATA_CHANNEL_STRING,
       .onaudiotrack = [](uint8_t *data, size_t size, void *userdata) -> void {
 #ifndef LINUX_BUILD
         oai_audio_decode(data, size);
@@ -78,6 +95,10 @@ void oai_webrtc() {
   peer_connection_oniceconnectionstatechange(peer_connection,
                                              oai_onconnectionstatechange_task);
   peer_connection_onicecandidate(peer_connection, oai_on_icecandidate_task);
+  peer_connection_ondatachannel(peer_connection,
+                                oai_ondatachannel_onmessage_task,
+                                oai_ondatachannel_onopen_task, NULL);
+
   peer_connection_create_offer(peer_connection);
 
   while (1) {
