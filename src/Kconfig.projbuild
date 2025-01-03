@@ -1,0 +1,15 @@
+menu "OpenAI Board Configuration"
+
+    choice OPENAI_BOARD_TYPE
+    prompt "openai board type"
+    default OPENAI_BOARD_ESP32_S3
+
+        config OPENAI_BOARD_ESP32_S3
+            bool "default demo board ESP32-S3"
+
+        config OPENAI_BOARD_M5_ATOMS3R
+            bool "M5Stack ATOMS3R with EchoBase"
+
+    endchoice
+
+endmenu
