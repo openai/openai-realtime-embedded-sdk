@@ -37,9 +37,19 @@ static void oai_onconnectionstatechange_task(PeerConnectionState state,
 #endif
   } else if (state == PEER_CONNECTION_CONNECTED) {
 #ifndef LINUX_BUILD
+#if CONFIG_SPIRAM
+    constexpr size_t stack_size = 20000;
     StackType_t *stack_memory = (StackType_t *)heap_caps_malloc(
         20000 * sizeof(StackType_t), MALLOC_CAP_SPIRAM);
-    xTaskCreateStaticPinnedToCore(oai_send_audio_task, "audio_publisher", 20000,
+#else // CONFIG_SPIRAM
+    constexpr size_t stack_size = 20000;
+    StackType_t *stack_memory = (StackType_t *)malloc(stack_size * sizeof(StackType_t));
+#endif // CONFIG_SPIRAM
+    if (stack_memory == nullptr) {
+      ESP_LOGE(LOG_TAG, "Failed to allocate stack memory for audio publisher.");
+      esp_restart();
+    }
+    xTaskCreateStaticPinnedToCore(oai_send_audio_task, "audio_publisher", stack_size,
                                   NULL, 7, stack_memory, &task_buffer, 0);
 #endif
   }
