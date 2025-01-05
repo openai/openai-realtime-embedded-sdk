@@ -1,3 +1,6 @@
+#ifndef _MAIN_H_
+#define _MAIN_H_
+
 #include <peer.h>
 
 #define LOG_TAG "realtimeapi-sdk"
@@ -11,3 +14,5 @@ void oai_send_audio(PeerConnection *peer_connection);
 void oai_audio_decode(uint8_t *data, size_t size);
 void oai_webrtc();
 void oai_http_request(char *offer, char *answer);
+
+#endif

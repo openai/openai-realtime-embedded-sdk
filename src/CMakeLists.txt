@@ -1,12 +1,14 @@
-set(COMMON_SRC "webrtc.cpp" "main.cpp" "http.cpp")
+set(COMMON_SRC "webrtc.cpp" "main.cpp" "http.cpp" "media.cpp")
 
 if(IDF_TARGET STREQUAL linux)
 	idf_component_register(
-		SRCS ${COMMON_SRC}
+		SRCS ${COMMON_SRC} "platform_linux.cpp"
 		REQUIRES peer esp-libopus esp_http_client)
+	target_link_libraries(${COMPONENT_LIB} PRIVATE pulse pulse-simple)
+	target_link_libraries(${COMPONENT_LIB} PRIVATE "-lbsd")
 else()
 	idf_component_register(
-		SRCS ${COMMON_SRC} "wifi.cpp" "media.cpp"
+		SRCS ${COMMON_SRC} "platform_esp32s3.cpp" "wifi.cpp"
 		REQUIRES driver esp_wifi nvs_flash peer esp_psram esp-libopus esp_http_client)
 endif()
 

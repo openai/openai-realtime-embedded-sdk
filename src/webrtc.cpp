@@ -1,32 +1,20 @@
-#ifndef LINUX_BUILD
-#include <driver/i2s.h>
-#include <opus.h>
-#endif
-
 #include <esp_event.h>
 #include <esp_log.h>
+#include <opus.h>
 #include <string.h>
 
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
 #include "main.h"
+#include "peer_connection.h"
+#include "platform.h"
 
 #define TICK_INTERVAL 15
 #define GREETING                                                    \
   "{\"type\": \"response.create\", \"response\": {\"modalities\": " \
   "[\"audio\", \"text\"], \"instructions\": \"Say 'How can I help?.'\"}}"
 
-PeerConnection *peer_connection = NULL;
-
-#ifndef LINUX_BUILD
-StaticTask_t task_buffer;
-void oai_send_audio_task(void *user_data) {
-  oai_init_audio_encoder();
-
-  while (1) {
-    oai_send_audio(peer_connection);
-    vTaskDelay(pdMS_TO_TICKS(TICK_INTERVAL));
-  }
-}
-#endif
+static PeerConnection *peer_connection = NULL;
 
 static void oai_ondatachannel_onmessage_task(char *msg, size_t len,
                                              void *userdata, uint16_t sid) {
@@ -54,16 +42,10 @@ static void oai_onconnectionstatechange_task(PeerConnectionState state,
 
   if (state == PEER_CONNECTION_DISCONNECTED ||
       state == PEER_CONNECTION_CLOSED) {
-#ifndef LINUX_BUILD
-    esp_restart();
-#endif
+    oai_platform_restart();
   } else if (state == PEER_CONNECTION_CONNECTED) {
-#ifndef LINUX_BUILD
-    StackType_t *stack_memory = (StackType_t *)heap_caps_malloc(
-        20000 * sizeof(StackType_t), MALLOC_CAP_SPIRAM);
-    xTaskCreateStaticPinnedToCore(oai_send_audio_task, "audio_publisher", 20000,
-                                  NULL, 7, stack_memory, &task_buffer, 0);
-#endif
+    oai_init_audio_encoder();
+    oai_platform_send_audio_task(peer_connection);
   }
 }
 
@@ -80,9 +62,7 @@ void oai_webrtc() {
       .video_codec = CODEC_NONE,
       .datachannel = DATA_CHANNEL_STRING,
       .onaudiotrack = [](uint8_t *data, size_t size, void *userdata) -> void {
-#ifndef LINUX_BUILD
         oai_audio_decode(data, size);
-#endif
       },
       .onvideotrack = NULL,
       .on_request_keyframe = NULL,
@@ -92,9 +72,7 @@ void oai_webrtc() {
   peer_connection = peer_connection_create(&peer_connection_config);
   if (peer_connection == NULL) {
     ESP_LOGE(LOG_TAG, "Failed to create peer connection");
-#ifndef LINUX_BUILD
-    esp_restart();
-#endif
+    oai_platform_restart();
   }
 
   peer_connection_oniceconnectionstatechange(peer_connection,
