@@ -9,7 +9,7 @@ jobs:
   build:
     strategy:
       matrix:
-        target: [esp32s3, linux]
+        board: [esp-box, esp32s3_korvo_2, esp32s3_others, linux]
 
     runs-on: ubuntu-latest
 
@@ -24,5 +24,5 @@ jobs:
         docker run -v $PWD:/project -w /project -u 0 \
         -e HOME=/tmp -e WIFI_SSID=A -e WIFI_PASSWORD=B -e OPENAI_API_KEY=X \
         espressif/idf:latest \
-        /bin/bash -c 'idf.py --preview set-target ${{ matrix.target }} && idf.py build'
+        /bin/bash -c 'idf.py @boards/${{ matrix.board }}.cfg build'
       shell: bash

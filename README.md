@@ -33,7 +33,10 @@ Set your Wifi SSID + Password as env variables
 * `export OPENAI_API_KEY=bing`
 
 Build
-* `idf.py build`
+* `idf.py @boards/esp-box.cfg build`
+* `idf.py @boards/esp32s3_korvo_2.cfg build`
+* `idf.py @boards/esp32s3_others.cfg build`
+* `idf.py @boards/linux.cfg build`
 
 If you built for `esp32s3` run the following to flash to the device
 * `sudo -E idf.py flash`

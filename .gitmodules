@@ -1,12 +1,6 @@
-[submodule "components/srtp"]
-	path = components/srtp
-	url = https://git@github.com/sepfy/esp_ports
-[submodule "deps/libpeer"]
-	path = deps/libpeer
-	url = https://github.com/sean-der/libpeer
-[submodule "components/esp-libopus"]
-	path = components/esp-libopus
-	url = https://github.com/XasWorks/esp-libopus.git
 [submodule "components/esp-protocols"]
 	path = components/esp-protocols
 	url = https://github.com/espressif/esp-protocols.git
+[submodule "components/peer/libpeer"]
+	path = components/peer/libpeer
+	url = https://github.com/sean-der/libpeer

@@ -20,8 +20,16 @@ endif()
 add_compile_definitions(OPENAI_API_KEY="$ENV{OPENAI_API_KEY}")
 add_compile_definitions(OPENAI_REALTIMEAPI="https://api.openai.com/v1/realtime?model=gpt-4o-mini-realtime-preview-2024-12-17")
 
-set(COMPONENTS src)
-set(EXTRA_COMPONENT_DIRS "src" "components/srtp" "components/peer" "components/esp-libopus")
+# Select board configuration based on -DBUILD_BOARD
+if(NOT DEFINED BUILD_BOARD)
+    message(FATAL_ERROR "BUILD_BOARD CMake variable is not set. Use idf.py @boards/BOARD.cfg reconfigure")
+endif()
+
+set(ENV{BUILD_BOARD} ${BUILD_BOARD})
+message(STATUS "Building for board: ${BUILD_BOARD}")
+
+set(COMPONENTS src ${BUILD_BOARD})
+set(EXTRA_COMPONENT_DIRS "src")
 
 if(IDF_TARGET STREQUAL linux)
 	add_compile_definitions(LINUX_BUILD=1)

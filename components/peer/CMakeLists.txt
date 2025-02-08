@@ -1,4 +1,4 @@
-set(PEER_PROJECT_PATH "../../deps/libpeer")
+set(PEER_PROJECT_PATH "./libpeer")
 file(GLOB CODES "${PEER_PROJECT_PATH}/src/*.c")
 
 idf_component_register(
@@ -8,9 +8,9 @@ idf_component_register(
 )
 
 # Disable KeepAlives
-file(READ ${CMAKE_CURRENT_SOURCE_DIR}/../../deps/libpeer/src/config.h INPUT_CONTENT)
+file(READ ${CMAKE_CURRENT_SOURCE_DIR}/libpeer/src/config.h INPUT_CONTENT)
 string(REPLACE "#define KEEPALIVE_CONNCHECK 10000" "#define KEEPALIVE_CONNCHECK 0" MODIFIED_CONTENT ${INPUT_CONTENT})
-file(WRITE ${CMAKE_CURRENT_SOURCE_DIR}/../../deps/libpeer/src/config.h ${MODIFIED_CONTENT})
+file(WRITE ${CMAKE_CURRENT_SOURCE_DIR}/libpeer/src/config.h ${MODIFIED_CONTENT})
 
 if(NOT IDF_TARGET STREQUAL linux)
   add_definitions("-DESP32 -DCONFIG_USE_LWIP=1 -DCONFIG_AUDIO_BUFFER_SIZE=8096 -DCONFIG_DATA_BUFFER_SIZE=102400 -D__BYTE_ORDER=__LITTLE_ENDIAN")

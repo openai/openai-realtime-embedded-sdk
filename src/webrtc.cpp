@@ -1,4 +1,4 @@
-#ifndef LINUX_BUILD
+#if (CONFIG_OPENAI_WITH_GMF == 0) && !defined(LINUX_BUILD)
 #include <driver/i2s.h>
 #include <opus.h>
 #endif
@@ -73,6 +73,13 @@ static void oai_on_icecandidate_task(char *description, void *user_data) {
   peer_connection_set_remote_description(peer_connection, local_buffer);
 }
 
+static void oai_peer_loop_task(void *arg) {
+  while (1) {
+    peer_connection_loop(peer_connection);
+    vTaskDelay(pdMS_TO_TICKS(TICK_INTERVAL));
+  }
+}
+
 void oai_webrtc() {
   PeerConfiguration peer_connection_config = {
       .ice_servers = {},
@@ -106,8 +113,6 @@ void oai_webrtc() {
 
   peer_connection_create_offer(peer_connection);
 
-  while (1) {
-    peer_connection_loop(peer_connection);
-    vTaskDelay(pdMS_TO_TICKS(TICK_INTERVAL));
-  }
+  xTaskCreatePinnedToCore(&oai_peer_loop_task, "peer connect task", 1024 * 16,
+                          NULL, 4, NULL, 0);
 }
