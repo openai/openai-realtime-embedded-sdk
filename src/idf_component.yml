@@ -50,7 +50,7 @@ dependencies:
 
   espressif/esp_audio_simple_player:
     path: ./examples/esp_audio_simple_player
-    git: https://github.com/espressif2022/esp-gmf.git
+    git: https://github.com/espressif/esp-gmf.git
     version: "main"
     rules:
     - if: ${BUILD_BOARD} in ["esp32s3_korvo_2", "esp-box"]
