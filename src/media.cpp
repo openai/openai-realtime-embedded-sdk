@@ -1,3 +1,4 @@
+#if (CONFIG_OPENAI_WITH_GMF == 0)
 #include <driver/i2s.h>
 #include <opus.h>
 
@@ -142,3 +143,4 @@ void oai_send_audio(PeerConnection *peer_connection) {
   peer_connection_send_audio(peer_connection, encoder_output_buffer,
                              encoded_size);
 }
+#endif

@@ -1,3 +1,56 @@
 dependencies:
   idf:
     version: ">=4.1.0"
+  
+  sepfy/srtp:
+    version: "^2.3.0"
+
+  78/esp-opus:
+    version: "^1.0.4"
+    rules:
+    - if: ${BUILD_BOARD} not in ["esp32s3_korvo_2", "esp-box"]
+
+  espressif/esp32_s3_korvo_2:
+    version: "^3.0.0"
+    rules:
+    - if: "${BUILD_BOARD} == esp32s3_korvo_2"
+
+  espressif/esp-box:
+    version: "^3.1.0"
+    rules:
+    - if: "${BUILD_BOARD} == esp-box"
+
+  espressif/gmf_core:
+    path: ./gmf_core
+    git: https://github.com/espressif/esp-gmf.git
+    version: "main"
+    rules:
+    - if: ${BUILD_BOARD} in ["esp32s3_korvo_2", "esp-box"]
+
+  espressif/gmf_io:
+    path: ./gmf_elements/gmf_io
+    git: https://github.com/espressif/esp-gmf.git
+    version: "main"
+    rules:
+    - if: ${BUILD_BOARD} in ["esp32s3_korvo_2", "esp-box"]
+
+  espressif/gmf_misc:
+    path: ./gmf_elements/gmf_misc
+    git: https://github.com/espressif/esp-gmf.git
+    version: "main"
+    rules:
+    - if: ${BUILD_BOARD} in ["esp32s3_korvo_2", "esp-box"]
+
+  espressif/gmf_audio:
+    path: ./gmf_elements/gmf_audio
+    git: https://github.com/espressif/esp-gmf.git
+    version: "main"
+    rules:
+    - if: ${BUILD_BOARD} in ["esp32s3_korvo_2", "esp-box"]
+
+  espressif/esp_audio_simple_player:
+    path: ./examples/esp_audio_simple_player
+    git: https://github.com/espressif/esp-gmf.git
+    version: "main"
+    rules:
+    - if: ${BUILD_BOARD} in ["esp32s3_korvo_2", "esp-box"]
